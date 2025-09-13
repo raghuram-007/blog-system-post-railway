@@ -232,16 +232,23 @@ LOGIN_URL='/blog/login'
 # DEFAULT_FROM_EMAIL = 'test@example.com'  # or anything like 'admin@yourdomain.com'
 
 
-# Email configuration for Mailtrap
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'  # Correct host for Mailtrap
-EMAIL_HOST_USER = os.environ.get('MAILTRAP_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('MAILTRAP_PASSWORD')  # Never hardcode!
-EMAIL_PORT = 587  # or 2525, both work with Mailtrap
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = os.environ.get('MAILTRAP_USER')  # 3be7d87bd9fe90 in Railway
+EMAIL_HOST_PASSWORD = os.environ.get('MAILTRAP_PASSWORD')  # your password in Railway
+EMAIL_PORT = 587  # STARTTLS recommended, 587 is standard
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False  # Important: Use either TLS or SSL, not both
-DEFAULT_FROM_EMAIL = 'test@example.com'  # Change to your blog name
-EMAIL_TIMEOUT = 10
+EMAIL_USE_SSL = False  # Must be False if TLS is True
+DEFAULT_FROM_EMAIL = '<no-reply@example.com>'
+# EMAIL_TIMEOUT = 10
+
+
+
+if os.environ.get("RAILWAY_ENV") == "production":
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
 
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
