@@ -36,10 +36,18 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [host.strip() for host in os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')]
 
+# Use this for proxies (Railway forwards requests)
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# CSRF & session cookie settings
 CSRF_COOKIE_SECURE = True          # send CSRF cookie over HTTPS only
 SESSION_COOKIE_SECURE = True       # send session cookie over HTTPS only
-CSRF_TRUSTED_ORIGINS = ['https://web-production-d0cff.up.railway.app']
+CSRF_TRUSTED_ORIGINS = [
+    'https://web-production-d0cff.up.railway.app',
+    'http://web-production-d0cff.up.railway.app',  # include HTTP if proxy uses it
+]
+
 
 
 # Application definition
