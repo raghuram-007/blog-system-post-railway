@@ -160,34 +160,40 @@ def logout(request):
 
 @login_required
 def new_post(request):
-    category=Category.objects.all()
-    form=Postform()
+    category = Category.objects.all()
+    form = Postform()
+    
     if request.method == 'POST':
-        form=Postform(request.POST,request.FILES)
+        form = Postform(request.POST, request.FILES)
         if form.is_valid():
-            post = form.save(commit=False)   # ✅ Don't save to DB yet
-            post.user = request.user         # ✅ Assign the logged-in user
+            post = form.save(commit=False)   # Don't save to DB yet
+            post.user = request.user         # Assign the logged-in user
             post.save()   
-            post_url=request.build_absolute_uri(reverse('blog:detail',args=[post.slug]))
-            subject=f'New Blog Posted:{post.title}'
-            message=render_to_string("folders/new_post_email.html",{
-                'user':request.user,
-                'post':post,
-                'post_url':post_url
+
+            post_url = request.build_absolute_uri(reverse('blog:detail', args=[post.slug]))
+            subject = f'New Blog Posted: {post.title}'
+            message = render_to_string("folders/new_post_email.html", {
+                'user': request.user,
+                'post': post,
+                'post_url': post_url
             })
-           
-            email=EmailMessage(
-                 subject=subject,
+
+            email = EmailMessage(
+                subject=subject,
                 body=message,
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                 to=[user.email for user in User.objects.filter(is_active=True)],  # send to all
-                
-
+                to=[user.email for user in User.objects.filter(is_active=True)],  # send to all
             )
-           
-            email.content_subtype = "html"  # Important to send HTML email
-            email.send(fail_silently=False)
-            return redirect('blog:dashboard')
+            email.content_subtype = "html"  # Important for HTML emails
+
+            # ✅ Safe email sending
+            try:
+                email.send(fail_silently=False)
+            except Exception as e:
+                print(f"Email sending failed: {e}")  # Logs the error but doesn't crash
+
+            return redirect('blog:dashboard')  # Redirect after saving
+
             
         
         
