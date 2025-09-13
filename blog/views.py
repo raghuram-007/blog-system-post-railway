@@ -269,7 +269,17 @@ def forget_password(request):
             "user": user,
         })
 
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+        email=EmailMessage(
+                 subject=subject,
+                body=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                 to=[user.email for user in User.objects.filter(is_active=True)],  # send to all
+                
+
+            )
+           
+        email.content_subtype = "html"  # Important to send HTML email
+        email.send(fail_silently=False)
         messages.success(request, "Password reset link sent to your email.")
         return redirect("blog:forget")  # Don't redirect to reset page directly
 

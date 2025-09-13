@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+import os
+import dj_database_url
 
 from pathlib import Path
 
@@ -24,10 +26,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-afbrh%o&0bi+y4si4^z06jze6o45y^*!zq&!r0k^=2k=@kbz)6'
+# SECRET_KEY = 'django-insecure-afbrh%o&0bi+y4si4^z06jze6o45y^*!zq&!r0k^=2k=@kbz)6'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'your-default-secret-key-for-development')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
 
 ALLOWED_HOSTS = []
 
@@ -47,6 +52,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -79,7 +85,24 @@ WSGI_APPLICATION = 'blogproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'post',
+#         'USER':'root',
+#         'PASSWORD':'root',
+#         'HOST':'localhost',
+#         'PORT':'3306'
+#     }
+# }
+if os.environ.get("DATABASE_URL"):
+    # On Railway (Postgres)
+    DATABASES = {
+        'default': dj_database_url.config(default=os.environ["DATABASE_URL"])
+    }
+else:
+    # On local (MySQL)
+    DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'post',
@@ -125,11 +148,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS=[
-    BASE_DIR/'static',
-    BASE_DIR/'blog/static'
-]
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 
 # Default primary key field type
@@ -185,20 +206,34 @@ LOGGING = {
     },
 }
 
-MEDIA_URL='/media/'
-MEDIA_ROOT=  BASE_DIR/'media'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_URL='/blog/login'
 
 
 
 
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+# EMAIL_HOST_USER = '3be7d87bd9fe90'# use mailtrap user 
+# EMAIL_HOST_PASSWORD = 'fa131db5bfa3df'#u just use your mailtrap password so u must login and click test mail sandbox something likewise an user also
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL = 'test@example.com'  # or anything like 'admin@yourdomain.com'
+
+
+# Email configuration for Mailtrap
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = 'e9b0078cfae616'
-EMAIL_HOST_PASSWORD = '2bf7b1642ca960'
-EMAIL_PORT = 587
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'  # Correct host for Mailtrap
+EMAIL_HOST_USER = os.environ.get('MAILTRAP_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('MAILTRAP_PASSWORD')  # Never hardcode!
+EMAIL_PORT = 587  # or 2525, both work with Mailtrap
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'test@example.com'  # or anything like 'admin@yourdomain.com'
+EMAIL_USE_SSL = False  # Important: Use either TLS or SSL, not both
+DEFAULT_FROM_EMAIL = 'test@example.com'  # Change to your blog name
+EMAIL_TIMEOUT = 10
 
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
