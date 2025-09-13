@@ -101,18 +101,18 @@ if os.environ.get("DATABASE_URL"):
     DATABASES = {
         'default': dj_database_url.config(default=os.environ["DATABASE_URL"])
     }
-else:
-    # On local (MySQL)
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'post',
-        'USER':'root',
-        'PASSWORD':'root',
-        'HOST':'localhost',
-        'PORT':'3306'
-    }
-}
+# else:
+#     # On local (MySQL)
+#     DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'post',
+#         'USER':'root',
+#         'PASSWORD':'root',
+#         'HOST':'localhost',
+#         'PORT':'3306'
+#     }
+# }
 
 
 # Password validation
