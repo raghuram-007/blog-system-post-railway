@@ -119,7 +119,7 @@ else:
             'NAME': BASE_DIR / "db.sqlite3",
         }
     }
-
+# gunicorn blogproject.wsgi
 
 
 # Password validation
