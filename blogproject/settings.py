@@ -37,6 +37,9 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = [host.strip() for host in os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')]
 
 
+CSRF_COOKIE_SECURE = True          # send CSRF cookie over HTTPS only
+SESSION_COOKIE_SECURE = True       # send session cookie over HTTPS only
+CSRF_TRUSTED_ORIGINS = ['https://web-production-d0cff.up.railway.app']
 
 
 # Application definition
