@@ -41,8 +41,8 @@ USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # CSRF & session cookie settings
-CSRF_COOKIE_SECURE = True          # send CSRF cookie over HTTPS only
-SESSION_COOKIE_SECURE = True       # send session cookie over HTTPS only
+CSRF_COOKIE_SECURE = os.environ.get("CSRF_COOKIE_SECURE","False")=="True"         # send CSRF cookie over HTTPS only
+SESSION_COOKIE_SECURE =os.environ.get("SESSION_COOKIE_SECURE","False")=="True"     # send session cookie over HTTPS only
 CSRF_TRUSTED_ORIGINS = [
     'https://web-production-d0cff.up.railway.app',
     'http://web-production-d0cff.up.railway.app',  # include HTTP if proxy uses it
