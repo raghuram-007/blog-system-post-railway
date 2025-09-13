@@ -252,3 +252,14 @@ else:
 
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+
+# Cloudinary configuration
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dh1bhepdj',  # your cloud name
+    'API_KEY': '368533288838932',  # your API key
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),  # keep secret in Railway
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
